@@ -1,0 +1,41 @@
+#Instalando biblioteca
+!pip install xlsxwriter
+
+#Autentificar conta do gmail
+from google.colab import auth
+auth.authenticate_user()
+
+#Montando o Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+#Definindo local no BQ
+project_id = 'projeto-BQ' #Deve ser escrita como string ou seja entre aspas
+!gcloud config set project projeto-BQ #Deve ser escrita sem aspas
+
+#Definindo variável para rodar o BQ
+from google.cloud import bigquery
+client = bigquery.Client(project=project_id)
+
+#Definindo diretório no drive
+caminho = '/content/drive/Shareddrives/Programas'
+
+#Listando os arquivos
+import os
+PastaProgramas = os.listdir(caminho)
+PastaProgramas.sort()
+
+#Loop para rodar a Query e adicionar os dados no excel
+import pandas as pd
+with pd.ExcelWriter('EXCEL.xlsx', engine='xlsxwriter') as writer:
+  for elemento in PastaProgramas:
+    x = elemento.replace('.txt','')
+    a = open(caminho + '/' + elemento, mode='r')
+    b = a.read()
+    c = client.query(b).to_dataframe(create_bqstorage_client=False)
+    d = pd.DataFrame(c)
+    d.to_excel(writer, sheet_name=x, index=False)
+
+#Download na máquina local
+from google.colab import files
+files.download('EXCEL.xlsx')
