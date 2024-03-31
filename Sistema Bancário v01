@@ -1,0 +1,88 @@
+menu = """
+
+[d] = Depositar
+[s] = Saque
+[e] = Extrato
+[q] = Sair
+
+=>"""
+
+saldo = 0
+limite = 500
+extrato = []
+numero_saques = 0
+LIMITE_SAQUES = 3
+total_saques = 0
+
+while True:
+
+  opcao = input(menu).strip()
+
+########### Depósito ###########
+ 
+  if opcao == "d":
+    deposito = float(input("Você selecionou a opção depósito, insira o valor: "))
+    
+    if deposito > 0:
+      saldo += deposito
+      extrato.append(deposito)
+      print(f"Depósito de R${deposito:.2f} foi realizado com sucesso!")
+    
+    else:
+      print("Não é possível adicionar valores negativos, por favor, adicione um valor maior que zero!")
+
+########### Saque ###########
+
+  elif opcao == "s":
+    saque = float(input("Você selecionou a opção saque, insira o valor: "))
+    
+    if saque > 0:
+      
+      if numero_saques >= 3:
+        print("Limite de saques diários atingido, tente novamente amanhã!")
+      
+      elif total_saques + saque > limite:
+        print(f"O saque máximo por dia seria de R$500, você ainda pode retirar R${limite-total_saques}!e")
+      
+      elif numero_saques <= 3 and total_saques < 500 and saldo - saque > 0:
+        print(f"Saque de R${saque:.2f} foi realizado com sucesso!")
+        saldo -= saque
+        numero_saques += 1
+        total_saques += saque
+        extrato.append(-1*saque)
+      
+      elif saldo <= 0:
+        print("Você não tem saldo, realize um depósito!")
+    
+    else:
+      print("O valor de saque precsia ser maior que zero!")
+
+########### Extrato ###########
+  
+  elif opcao == "e":
+    print(f"Você tem R${saldo} em conta!")
+    print("====== Extrato ======")
+   
+    for i in (extrato):
+      if i > 0:
+        print(f"Depósito: R${i:.2f}")
+      
+      else:
+        print(f"Saque: R${i:.2f}")
+
+########### Exit do programa ###########  
+  
+  elif opcao == "q" :
+   
+    print("Você está saindo da sua conta!")
+    
+    break
+
+########### Erro no Input ###########  
+  
+  else:
+    
+    print("Essa opção não existe, por favor, escolha uma opção válida!")
+
+
+
