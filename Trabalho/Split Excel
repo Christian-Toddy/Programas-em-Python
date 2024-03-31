@@ -1,0 +1,19 @@
+from google.cloud import storage
+import pandas as pd
+import os
+import shutil
+
+caminho = '/content/drive/MyDrive/sib_202306_AL.csv'
+df = pd.read_csv(caminho,encoding='latin_1',error_bad_lines=False)# colocar um loop
+
+nome = os.path.basename(caminho)
+tamanho = os.path.getsize(caminho)/1048576 #rever o tamanho do arquivo
+nº_arquivos = int(tamanho//100 + 2)
+linhas_arquivo = (len(df)//nº_arquivos+1)
+
+div = [df[i:i+linhas_arquivo] for i in range (0,len(df),linhas_arquivo)] # 5 linhas do começo da tabela
+
+for i, parte in enumerate(div):
+  nome_arquivo = f'{nome}_{i+1}.csv'
+  parte.to_csv(nome_arquivo, index=False)
+  shutil.copy(nome_arquivo, "/content/drive/MyDrive")
